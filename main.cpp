@@ -8,6 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <string>
 
 using namespace std;
 
@@ -108,7 +109,83 @@ vector<int> is_content_in_transmissionKMP(string pattern, string text)
         }
     }
 
+    cout << "len positions: " << positions.size() << endl;
     return positions;
+}
+
+// Second part: Check if the content of the transmission files have a "mirroring code", it's say the greater palindrome
+void mirroring_codeManacher(string text)
+{
+    // Concatenate the text with special character
+    string text_special = "";
+    for (char e : text)
+    {
+        text_special += "$";
+        text_special += e;
+    }
+    text_special += "$";
+
+    // cout << "Text: " << text << endl;
+    // cout << "Text special: " << text_special << endl;
+
+
+    // Iterate over the text to find the greater palindrome
+    int len_text_special = text_special.size();
+    vector<int> LPS(len_text_special, 0);
+
+    int current_element = 0;
+    int rigth = -1;
+    int left = 1;
+
+    while (current_element < len_text_special)
+    {
+        if (rigth >= 0 && left < len_text_special && text_special[rigth] == text_special[left])
+        {
+             LPS[current_element]++;
+             rigth++;
+             left--;
+        }
+        else
+        {
+            current_element++;
+            rigth = current_element + 1;
+            left = current_element - 1;
+        }
+    }
+
+    cout << "LPS: " << endl;
+    for (int i = 0; i < text_special.size(); i++)
+    {
+        cout << text_special[i] << " ";
+    }
+
+    cout << endl;
+
+    int max_len_palindrome = 0;
+    for (int i = 0; i < text_special.size(); i++)
+    {
+        max_len_palindrome = max(max_len_palindrome, LPS[i]);
+        cout << LPS[i] << " ";
+    }
+
+    for (int i = 0; i < text_special.size(); i++)
+    {
+        if (LPS[i] == max_len_palindrome)
+        {
+            cout << endl;
+            cout << "The greater palindrome is: ";
+            for (int j = i - max_len_palindrome; j <= i + max_len_palindrome; j++)
+            {
+                if (text_special[j] != '$')
+                {
+                    cout << text_special[j];
+                }
+            }
+            cout << endl;
+            break;
+        }
+    }
+    
 }
 
 
@@ -123,19 +200,34 @@ int main () {
 
     for (int i = 0; i < number_files; i++)
     {
-        // Open the file to read
+        // Abre el archivo para leer
         ifstream file(name_files[i]);
 
-        cout << "File: " << name_files[i] << endl;
+        // cout << "File: " << name_files[i] << endl;
 
-        // Get the each line of the file
-        while (getline(file, text_files[i]))
+        // Variable temporal para almacenar cada línea
+        string line;
+        text_files[i] = ""; // Inicializamos para que esté vacío antes de acumular
+
+        // Lee cada línea del archivo
+        while (getline(file, line))
         {
-            // Print each line of the file
-            cout << text_files[i] << endl;
+            // Acumula cada línea en text_files[i], añadiendo un salto de línea entre ellas
+            text_files[i] += line;
+            
+            // Imprime cada línea del archivo
+            // cout << line << endl;
         }
 
-        cout << endl;
+        file.close(); // Cierra el archivo
+    }
+
+    cout << "Text files: " << endl;
+
+    for (int i = 0; i < number_files; i++)
+    {
+        cout << "Text: "  << endl;
+        cout << text_files[i] << endl;
     }
 
     // Verify if the content of any mcodeX.txt is in the each transmissionX.txt
@@ -145,12 +237,13 @@ int main () {
 
         for (int j = 0; j < 2; j++)
         {
-            cout << "Transmission" << j + 1 << ".txt: ";
+            cout << "transmission" << j + 1 << ".txt: ";
 
             vector<int> positions = is_content_in_transmissionKMP(text_files[i], text_files[j]);
 
             if (positions.size() > 0)
             {
+                // Here remember only print the first match
                 cout << "true, position: ";
                 for (int k = 0; k < positions.size(); k++)
                 {
@@ -165,6 +258,15 @@ int main () {
             cout << endl;
         }
 
+        cout << endl;
+    }
+
+
+    // Part two: check if the content of the transmission files have a "mirroring code", it's say the greater palindrome
+    for (int i = 0; i < 2; i++)
+    {
+        cout << "Transmission" << i + 1 << ".txt" << endl;
+        mirroring_codeManacher(text_files[i]);
         cout << endl;
     }
 
