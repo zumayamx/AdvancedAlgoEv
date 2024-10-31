@@ -8,7 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <string>
+#include <algorithm>
 
 using namespace std;
 
@@ -30,7 +30,7 @@ vector<int> is_content_in_transmissionKMP(string pattern, string text)
     vector<int> pi(pattern.size(), 0);
 
     int i = 1;
-    while(i < len_pattern)
+    while (i < len_pattern)
     {
         // If the character of actual position is equal to the character of the pattern in the position len_prefix_suffix
         if (pattern[i] == pattern[len_prefix_suffix])
@@ -128,7 +128,6 @@ void mirroring_codeManacher(string text)
     // cout << "Text: " << text << endl;
     // cout << "Text special: " << text_special << endl;
 
-
     // Iterate over the text to find the greater palindrome
     int len_text_special = text_special.size();
     vector<int> LPS(len_text_special, 0);
@@ -141,9 +140,9 @@ void mirroring_codeManacher(string text)
     {
         if (rigth >= 0 && left < len_text_special && text_special[rigth] == text_special[left])
         {
-             LPS[current_element]++;
-             rigth++;
-             left--;
+            LPS[current_element]++;
+            rigth++;
+            left--;
         }
         else
         {
@@ -185,11 +184,82 @@ void mirroring_codeManacher(string text)
             break;
         }
     }
-    
 }
 
+// Third part: check what way similitude has the content of the transmission files
+void similitude_content_transmissionSuffixArray(string text1, string text2)
+{
+    cout << "Text1: " << text1 << endl;
+    cout << "Text2: " << text2 << endl;
 
-int main () {
+    // Concatenate both texts with a special character to avoid similarities between the texts
+    string concatenated_text = text1 + "$" + text2;
+
+    cout << "Concatenated text: " << concatenated_text << endl;
+
+    // Define the vector of strings for the suffix array of each text
+    vector<pair<string, int>> suffix_array_text(concatenated_text.size());
+
+    // Build the suffix array with positions
+    for (int i = 0; i < concatenated_text.size(); i++)
+    {
+        suffix_array_text[i] = {concatenated_text.substr(i), i};
+    }
+
+    // Print the unsorted suffix array
+    cout << "Unsorted suffix array:" << endl;
+    for (auto e : suffix_array_text)
+    {
+        cout << e.first << " at position " << e.second << endl;
+    }
+
+    // Sort the suffix array lexicographically
+    sort(suffix_array_text.begin(), suffix_array_text.end());
+
+    // Print the sorted suffix array
+    cout << "Sorted suffix array:" << endl;
+    for (auto e : suffix_array_text)
+    {
+        cout << e.first << " at position " << e.second << endl;
+    }
+
+    int max_similitude = 0;
+    string longest_common_substring;
+    int split_index = text1.size(); // Position of the separator ($)
+
+    // Traverse the sorted suffix array to find the longest common substring
+    for (int i = 1; i < suffix_array_text.size(); i++)
+    {
+        int pos1 = suffix_array_text[i - 1].second;
+        int pos2 = suffix_array_text[i].second;
+
+        // Check that the suffixes are from different parts (one from text1, the other from text2)
+        if ((pos1 < split_index && pos2 > split_index) || (pos1 > split_index && pos2 < split_index))
+        {
+            // Calculate LCP between suffix_array_text[i - 1] and suffix_array_text[i]
+            int lcp_length = 0;
+            while (lcp_length < suffix_array_text[i - 1].first.size() &&
+                   lcp_length < suffix_array_text[i].first.size() &&
+                   suffix_array_text[i - 1].first[lcp_length] == suffix_array_text[i].first[lcp_length])
+            {
+                lcp_length++;
+            }
+
+            // Update maximum LCP and store the longest common substring
+            if (lcp_length > max_similitude)
+            {
+                max_similitude = lcp_length;
+                longest_common_substring = suffix_array_text[i].first.substr(0, lcp_length);
+            }
+        }
+    }
+
+    cout << "The similitude between the content of the transmission files is: " << max_similitude << endl;
+    cout << "Longest common substring: " << longest_common_substring << endl;
+}
+
+int main()
+{
 
     // Define the vector of strings for the name of the files
     vector<string> name_files = {"transmission1.txt", "transmission2.txt", "mcode1.txt", "mcode2.txt", "mcode3.txt"};
@@ -214,7 +284,7 @@ int main () {
         {
             // Acumula cada línea en text_files[i], añadiendo un salto de línea entre ellas
             text_files[i] += line;
-            
+
             // Imprime cada línea del archivo
             // cout << line << endl;
         }
@@ -226,7 +296,7 @@ int main () {
 
     for (int i = 0; i < number_files; i++)
     {
-        cout << "Text: "  << endl;
+        cout << "Text: " << endl;
         cout << text_files[i] << endl;
     }
 
@@ -261,7 +331,6 @@ int main () {
         cout << endl;
     }
 
-
     // Part two: check if the content of the transmission files have a "mirroring code", it's say the greater palindrome
     for (int i = 0; i < 2; i++)
     {
@@ -269,6 +338,9 @@ int main () {
         mirroring_codeManacher(text_files[i]);
         cout << endl;
     }
+
+    // Part three: check what way similitude has the content of the transmission files
+    similitude_content_transmissionSuffixArray(text_files[0], text_files[1]);
 
     return 0;
 }
