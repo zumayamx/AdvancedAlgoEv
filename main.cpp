@@ -16,7 +16,7 @@ using namespace std;
 // To solve this task we use the KMP algorithm, this returns "true" and the position of the first match
 // if the content of the mcode is in the transmission, otherwise returns "false"
 
-vector<int> is_content_in_transmissionKMP(string pattern, string text)
+void is_content_in_transmissionKMP(string pattern, string text)
 {
     // First we find the pi array
 
@@ -87,7 +87,7 @@ vector<int> is_content_in_transmissionKMP(string pattern, string text)
         if (index_pattern == len_pattern)
         {
             // If the index_pattern is equal to the len_pattern, save the position of the match
-            positions.push_back(index_text - index_pattern);
+            positions.push_back(index_text - index_pattern + 1);
 
             // Set the index_pattern to the previous value of the pi array in the position index_pattern - 1
             // to verify if there are coincidences with a len of prefix-suffix minor
@@ -109,8 +109,14 @@ vector<int> is_content_in_transmissionKMP(string pattern, string text)
         }
     }
 
-    cout << "len positions: " << positions.size() << endl;
-    return positions;
+    if (positions.size() > 0)
+    {
+        cout << "true " << positions.front() << endl;
+    }
+    else
+    {
+        cout << "false" << endl;
+    }
 }
 
 // Second part: Check if the content of the transmission files have a "mirroring code", it's say the greater palindrome
@@ -124,9 +130,6 @@ void mirroring_codeManacher(string text)
         text_special += e;
     }
     text_special += "$";
-
-    // cout << "Text: " << text << endl;
-    // cout << "Text special: " << text_special << endl;
 
     // Iterate over the text to find the greater palindrome
     int len_text_special = text_special.size();
@@ -152,50 +155,41 @@ void mirroring_codeManacher(string text)
         }
     }
 
-    cout << "LPS: " << endl;
-    for (int i = 0; i < text_special.size(); i++)
-    {
-        cout << text_special[i] << " ";
-    }
-
-    cout << endl;
-
     int max_len_palindrome = 0;
+    int beginning_position_palindrome = 0;
     for (int i = 0; i < text_special.size(); i++)
     {
         max_len_palindrome = max(max_len_palindrome, LPS[i]);
-        cout << LPS[i] << " ";
+        beginning_position_palindrome = (max_len_palindrome == LPS[i]) ? i : beginning_position_palindrome;
     }
 
-    for (int i = 0; i < text_special.size(); i++)
+    cout << "Beginning poistion of the greater palindrome: " << beginning_position_palindrome - (max_len_palindrome / 2) << endl;
+    cout << "Length of the greater palindrome: " << max_len_palindrome << endl;
+    cout << "Finish position of the greater palindrome: " << beginning_position_palindrome + (max_len_palindrome / 2) << endl;
+}
+
+// Function to get a substring from a text
+string mySubstr(string text, int start, int end)
+{
+    string result = "";
+    for (int i = start; i < end; i++)
     {
-        if (LPS[i] == max_len_palindrome)
-        {
-            cout << endl;
-            cout << "The greater palindrome is: ";
-            for (int j = i - max_len_palindrome; j <= i + max_len_palindrome; j++)
-            {
-                if (text_special[j] != '$')
-                {
-                    cout << text_special[j];
-                }
-            }
-            cout << endl;
-            break;
-        }
+        result += text[i];
     }
+    return result;
 }
 
 // Third part: check what way similitude has the content of the transmission files
 void similitude_content_transmissionSuffixArray(string text1, string text2)
 {
-    cout << "Text1: " << text1 << endl;
-    cout << "Text2: " << text2 << endl;
+    // cout << "Text1: " << text1 << endl;
+    // cout << "Text2: " << text2 << endl;
 
     // Concatenate both texts with a special character to avoid similarities between the texts
     string concatenated_text = text1 + "$" + text2;
+    int len_concatenated_text = concatenated_text.size();
 
-    cout << "Concatenated text: " << concatenated_text << endl;
+    // cout << "Concatenated text: " << concatenated_text << endl;
 
     // Define the vector of strings for the suffix array of each text
     vector<pair<string, int>> suffix_array_text(concatenated_text.size());
@@ -203,25 +197,25 @@ void similitude_content_transmissionSuffixArray(string text1, string text2)
     // Build the suffix array with positions
     for (int i = 0; i < concatenated_text.size(); i++)
     {
-        suffix_array_text[i] = {concatenated_text.substr(i), i};
+        suffix_array_text[i] = {mySubstr(concatenated_text, i, len_concatenated_text), i};
     }
 
     // Print the unsorted suffix array
-    cout << "Unsorted suffix array:" << endl;
-    for (auto e : suffix_array_text)
-    {
-        cout << e.first << " at position " << e.second << endl;
-    }
+    // cout << "Unsorted suffix array:" << endl;
+    // for (auto e : suffix_array_text)
+    // {
+    //     cout << e.first << " at position " << e.second << endl;
+    // }
 
     // Sort the suffix array lexicographically
     sort(suffix_array_text.begin(), suffix_array_text.end());
 
     // Print the sorted suffix array
-    cout << "Sorted suffix array:" << endl;
-    for (auto e : suffix_array_text)
-    {
-        cout << e.first << " at position " << e.second << endl;
-    }
+    // cout << "Sorted suffix array:" << endl;
+    // for (auto e : suffix_array_text)
+    // {
+    //     cout << e.first << " at position " << e.second << endl;
+    // }
 
     int max_similitude = 0;
     string longest_common_substring;
@@ -254,7 +248,7 @@ void similitude_content_transmissionSuffixArray(string text1, string text2)
         }
     }
 
-    cout << "The similitude between the content of the transmission files is: " << max_similitude << endl;
+    // cout << "The similitude between the content of the transmission files is: " << max_similitude << endl;
     cout << "Longest common substring: " << longest_common_substring << endl;
 }
 
@@ -273,73 +267,50 @@ int main()
         // Abre el archivo para leer
         ifstream file(name_files[i]);
 
-        // cout << "File: " << name_files[i] << endl;
-
         // Variable temporal para almacenar cada línea
         string line;
-        text_files[i] = ""; // Inicializamos para que esté vacío antes de acumular
+        // Inicializamos para que esté vacío antes de acumular
+        text_files[i] = "";
 
         // Lee cada línea del archivo
         while (getline(file, line))
         {
             // Acumula cada línea en text_files[i], añadiendo un salto de línea entre ellas
             text_files[i] += line;
-
-            // Imprime cada línea del archivo
-            // cout << line << endl;
         }
 
-        file.close(); // Cierra el archivo
+        // Cierra el archivo
+        file.close();
     }
 
-    cout << "Text files: " << endl;
-
-    for (int i = 0; i < number_files; i++)
-    {
-        cout << "Text: " << endl;
-        cout << text_files[i] << endl;
-    }
-
-    // Verify if the content of any mcodeX.txt is in the each transmissionX.txt
+    // Part 1: verify if the content of any mcodeX.txt is in the each transmissionX.txt
+    cout << "PARTE 1: Verificar si el contendido de cualquier mcodeX.txt está en cada transmissionX.txt" << endl;
     for (int i = 2; i < number_files; i++)
     {
-        cout << "Is the content of " << name_files[i] << " in the each transmissionX.txt?" << endl;
+        cout << endl;
+        cout << name_files[i] << endl;
 
         for (int j = 0; j < 2; j++)
         {
-            cout << "transmission" << j + 1 << ".txt: ";
+            cout << name_files[j] << ": ";
 
-            vector<int> positions = is_content_in_transmissionKMP(text_files[i], text_files[j]);
-
-            if (positions.size() > 0)
-            {
-                // Here remember only print the first match
-                cout << "true, position: ";
-                for (int k = 0; k < positions.size(); k++)
-                {
-                    cout << positions[k] << " ";
-                }
-            }
-            else
-            {
-                cout << "false";
-            }
-
-            cout << endl;
+            is_content_in_transmissionKMP(text_files[i], text_files[j]);
         }
 
         cout << endl;
     }
 
     // Part two: check if the content of the transmission files have a "mirroring code", it's say the greater palindrome
+    cout << "PARTE 2: Verificar si el contenido de los archivos de transmisión tiene un \"código espejo\", es decir, el palíndromo más grande" << endl;
     for (int i = 0; i < 2; i++)
     {
-        cout << "Transmission" << i + 1 << ".txt" << endl;
+        cout << name_files[i];
         mirroring_codeManacher(text_files[i]);
         cout << endl;
     }
 
     // Part three: check what way similitude has the content of the transmission files
+    cout << "PARTE 3: Verificar cual es la subcadena común más larga entre los archivos de transmisión" << endl;
     similitude_content_transmissionSuffixArray(text_files[0], text_files[1]);
 
     return 0;
