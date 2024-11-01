@@ -24,6 +24,9 @@ using namespace std;
 
 // Return:
 // - None, only print the result
+
+// Complexity:
+// - O(n + m), where n is the length of the pattern and m is the length of the text
 void is_content_in_transmissionKMP(string pattern, string text)
 {
     // First we find the pi array
@@ -150,6 +153,9 @@ void is_content_in_transmissionKMP(string pattern, string text)
 
 // Return:
 // - None, only print the result
+
+// Complexity:
+// - O(n), where n is the length of the text
 void mirroring_codeManacher(string text)
 {
     // Initialize the special character empty
@@ -260,6 +266,9 @@ void mirroring_codeManacher(string text)
 // - text: string, the content of a text
 // - start: int, the start position to get the substring
 // - end: int, the end position to get the substring
+
+// Complexity:
+// - O(n), where n is the length of the text
 string mySubstr(string text, int start, int end = -1)
 {
     if (end == -1 || end > text.size())
@@ -281,6 +290,9 @@ string mySubstr(string text, int start, int end = -1)
 
 // Return:
 // - None, only print the result
+
+// Complexity:
+// - O((n + m)^2), cause the adyacent comparison of the suffixes, where m is the length of the text1 and n is the length of the text2
 void similitude_content_transmissionSuffixArray(string text1, string text2)
 {
     // Concatenate both texts with a special character to avoid similarities between the texts
