@@ -13,14 +13,6 @@
 
 using namespace std;
 
-void getCharacterInPoistion(string text, int position)
-{
-    if (position >= 0 && position < text.size())
-    {
-        cout << "Character at position " << position << ": " << text[position - 1] << endl;
-    }
-}
-
 // First part: verify if the content of any mcodeX.txt is in the each transmissionX.txt,
 // to solve this task we use the KMP algorithm, this returns "true" and the position of the first match
 // if the content of the mcode is in the transmission, otherwise returns "false"
@@ -422,7 +414,8 @@ int main()
 
         // Temporary variable to store each line
         string line;
-        text_files[i] = ""; // Ensure it’s empty before accumulating content
+        // Ensure it’s empty before accumulating content
+        text_files[i] = "";
 
         // Read each line of the file and accumulate it in text_files[i]
         while (getline(file, line))
@@ -432,6 +425,16 @@ int main()
 
         // Close the file
         file.close();
+    }
+
+    // Check if the files are not empty
+    for (int i = 0; i < text_files.size(); i++)
+    {
+        if (text_files[i].empty())
+        {
+            cout << "Warning: The file " << name_files[i] << " is empty" << endl;
+            return 1;
+        }
     }
 
     // Part 1: verify if the content of any mcodeX.txt is in each transmissionX.txt
@@ -471,6 +474,8 @@ int main()
         for (int j = i + 1; j < number_transmission_files; j++)
         {
             // Here, call the function that checks the longest common substring between the transmission files
+            // We can modify the function to find the longest common substring between any number of files in the future
+            // cause now only works for two files
             similitude_content_transmissionSuffixArray(text_files[i], text_files[j]);
         }
     }

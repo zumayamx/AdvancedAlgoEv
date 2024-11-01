@@ -1,0 +1,15 @@
+Integrantes - equipo 2
+
+Lisette Melo Reyes - A01028066
+Trabaje en la función similitude_content_transmissionSuffixArray(),
+la cual se encarga de encontrar la subcadena común de mayor longitud entre los dos archivos,
+esta regresa la posición inicial y final en cada uno de los archivos de transmisión de la cadena encontrada.
+
+José Manuel García Zumaya - A01784238
+Trabaje en el main() para darle estructura, tambien realice la función mirroring_codeManacher(),
+esta se encarga de buscar el palíndromo más largo en los dos archivos de transmisión con el algoritmo
+Manacher, tambien agregue algunas cosas a la función is_content_in_transmissionKMP() y realice mySubstr().
+
+Diego Valencia Moreno - A01784568
+Trabaje en la función is_content_in_transmissionKMP() la cual busca el contenido de los mcode.txt
+dentro de los transmission.txt y regresa true o false, además de la posición donde incia el contenido.
