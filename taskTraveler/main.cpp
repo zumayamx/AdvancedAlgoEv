@@ -95,8 +95,8 @@ int back_tracking(vector<vector<int>> &cities_graph_matrix,
              * We remove the next city from the visited set to allow to recursion to visit all
              * possible options to move to another cities.
              *
-             * That is, in each recursion call we remove the next city, then
-             * that city we need to process all possible paths, but without forgetting the cities
+             * That is, in each recursion call we pass the next city (that is the current city of it's recursion call),
+             * then that city we need to process all possible paths, but without forgetting the cities
              * that we have already visited, that's why we pass the same visited set to the next recursion call
              * and that's why use the for loop to iterate over all posible paths checking if the path exists.
              *
