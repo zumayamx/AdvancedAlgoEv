@@ -251,7 +251,7 @@ int main()
     /*
      * Define the minimum cost as the maximum integer value that can be stored in a variable,
      * it's like a "infinite" value to compare with the real minimum cost,
-     * and the initial city to start the travel.
+     * and the initial city to start the travel, in this case is the city 0 (Y), but you can change it.
      *
      * Also, we define a set to store the visited cities and we add the initial city to it.
      * We define out of the function to avoid to create the set in each recursion call.
